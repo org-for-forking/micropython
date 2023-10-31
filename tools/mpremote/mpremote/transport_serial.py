@@ -932,6 +932,12 @@ class RemoteFS:
         c.end()
         if fd < 0:
             raise OSError(-fd)
+        if mode == 'rb':
+            data = bytearray()
+            with RemoteFile(c, fd, False) as f:
+                while rd := f.read(200):
+                    data.extend(rd)
+            return io.BytesIO(data)
         return RemoteFile(c, fd, mode.find('b') == -1)
 
 
